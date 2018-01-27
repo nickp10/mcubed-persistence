@@ -20,7 +20,7 @@ class ServerUtils {
                 res.status(403).send({ error: "The application name and application key both need to be specified with the request." });
                 return;
             }
-            if (dbUtils.hasAccess(db, appName, appKey, tableName)) {
+            if (!dbUtils.hasAccess(db, appName, appKey, tableName)) {
                 res.status(403).send({ error: "The specified application does not have access to the specified table." });
                 return;
             }
@@ -30,11 +30,11 @@ class ServerUtils {
     }
 
     getAppName(req: express.Request): string {
-        return this.getFirstHeaderValue(req, "mCubed-App-Name");
+        return this.getFirstHeaderValue(req, "mcubed-app-name");
     }
 
     getAppKey(req: express.Request): string {
-        return this.getFirstHeaderValue(req, "mCubed-App-Key");
+        return this.getFirstHeaderValue(req, "mcubed-app-key");
     }
 
     getFirstHeaderValue(req: express.Request, headerName: string): string {

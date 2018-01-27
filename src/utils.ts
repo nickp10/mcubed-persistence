@@ -38,7 +38,7 @@ class Utils {
 	}
 
 	coerceTableName(tableName: string): string {
-		if (!tableName) {
+		if (!tableName || tableName === "*") {
 			return "";
 		}
 		return tableName.toLowerCase();

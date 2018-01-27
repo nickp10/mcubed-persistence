@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/nickp10/mcubed-persistence#readme",
   "scripts": {
-    "compile": "tsc"
+    "compile": "tsc",
+    "compile-debug": "tsc --sourceMap --outDir debug/"
   },
   "dependencies": {
     "argv": "0.0.2",
