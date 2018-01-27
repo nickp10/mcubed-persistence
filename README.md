@@ -27,7 +27,7 @@ This will start the RESTful server.
 `CreateAppKey`
 This will create an application key for the specified application. This is needed to provide an application with access to the database. An application must provide its application name and the generated application key when making a RESTful request to the server. This application will need to have been granted access to the specific table being requested or all the tables in the database. Note: all applications have deny access to all tables by default.
 
-* *--appName* - **Required.** This is the name of the application to generate an applcation key for.
+* *--appName* - **Required.** This is the name of the application to generate an application key for.
 
 `GetAppKey`
 This will retrieve the previously generated application key for the specified application. This is needed to provide an application with access to the database. An application must provide its application name and the generated application key when making a RESTful request to the server. This application will need to have been granted access to the specific table being requested or all the tables in the database. Note: all applications have deny access to all tables by default.
@@ -60,4 +60,5 @@ This will prevent access to all tables in the database for a specific applicatio
 This is used to check if an application has access to a specific table. This may be used to verify that permissions are configured correctly.
 
 * *--appName* - **Required.** This is the name of the application to check access for.
+* *--appKey* - **Required.** This is the key that was generated for the application to check access for.
 * *--tableName* - **Required.** This is the name of the table to check access to.
