@@ -26,6 +26,14 @@ class ServerUtils {
                 res.status(201).send();
             }
         });
+        app.put("/*", (req, res) => {
+            const tableName = this.validateRequest(db, req, res);
+            if (tableName) {
+                dbUtils.initTable(db, tableName);
+                db.get(tableName).find(req.query).assign(req.body).write();
+                res.status(202).send();
+            }
+        });
         app.delete("/*", (req, res) => {
             const tableName = this.validateRequest(db, req, res);
             if (tableName) {
