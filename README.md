@@ -22,7 +22,7 @@ This package is only usable via a command line interface (CLI). Every command ha
 `Start`
 This will start the RESTful server.
 
-* *-p / --port* - **Optional**. This is the port that the server will start on. This will default to 8000.
+* *-p / --port* - **Optional.** This is the port that the server will start on. This will default to 8000.
 
 `CreateAppKey`
 This will create an application key for the specified application. This is needed to provide an application with access to the database. An application must provide its application name and the generated application key when making a RESTful request to the server. This application will need to have been granted access to the specific table being requested or all the tables in the database. Note: all applications have deny access to all tables by default.
