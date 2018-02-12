@@ -26,10 +26,21 @@ class ServerUtils {
             if (this.validateRequest(db, req, res)) {
                 const tableName = this.getTableName(req);
                 dbUtils.initTable(db, tableName);
-                const value = req.body;
-                value.id = uuid4();
-                db.get(tableName).push(value).write();
-                res.status(201).send(value);
+                const records = req.body;
+                if (Array.isArray(records)) {
+                    for (let i = 0; i < records.length; i++) {
+                        const record = records[i];
+                        record.id = uuid4();
+                        db.get(tableName).push(record).value();
+                    }
+                    db.write();
+                    res.status(201).send(records);
+                } else {
+                    const record = req.body;
+                    record.id = uuid4();
+                    db.get(tableName).push(record).write();
+                    res.status(201).send(record);
+                }
             }
         });
         app.put("/*", (req, res) => {

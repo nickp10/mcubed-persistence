@@ -105,7 +105,7 @@ Each request also requires following HTTP request headers.
 Use the URL and HTTP request headers in conjunction with the HTTP verb to access the data.
 
 * *GET* - Gets either a single record or an array of records. If a record ID is specified, then this returns a single record matching the record ID. If no record ID is specified, then this will use the query string appended to the URL to perform a search and will return an array of records matching the criteria. The result will be returned in the HTTP response body.
-* *POST* - Creates a record. The record to be created should be a JSON formatted object in the body of the HTTP request. An ID (UUID version 4) will be added to the object using the `id` property. If an `id` value is specified in the HTTP request body, then this value will be overwritten. This request will return record with the generated ID in the HTTP response body.
+* *POST* - Creates a record or multiple records. The record to be created should be a JSON formatted object in the body of the HTTP request. To create multiple records, a JSON formatted array containing multiple JSON objects should be used in the body of the HTTP request. An ID (UUID version 4) will be added to each object using the `id` property. If an `id` value is specified in the HTTP request body, then the value from the HTTP request will be overwritten by the generated ID. This request will return the record(s) with the generated ID in the HTTP response body.
 * *PUT* - Updates a record or an array of records. If a record ID is specified, then this will update a single record matching the record ID. If no record ID is specified, then this will use the query string appended to the URL to perform a search and will update all records matching the criteria. The fields to be updated should be specified as a JSON formatted object in the body of the HTTP request. Any fields not specified in the JSON formatted object will not be changed. This request will not return anything in the HTTP response body.
 * *DELETE* - Deletes a record or an array of records. If a record ID specified, then this will delete a single record matching the record ID. If no record ID is specified,
 then this will use the query string appended to the URL to perform a search and will delete all records matching the criteria. This request will not return anything in the HTTP response body.
@@ -114,6 +114,7 @@ Changelog
 ----
 Changes from 2.0.0 to 2.1.0
 * Added the ability to delete application keys and tables from the command line interface.
+* Added the ability to create multiple records by passing in an array in the HTTP POST request body.
 
 Changes from 1.0.0 to 2.0.0
 * IDs (UUID version 4) will automatically be added to all records created via the POST request. Any manually specified IDs will be overwritten.
