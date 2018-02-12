@@ -40,7 +40,7 @@ class Args {
         }
 
         // Validate dbPath
-        this.dbPath = argDBPath || "mCubedDB.json";
+        this.dbPath = argDBPath || utils.getDefaultDBPath();
         if (!this.dbPath) {
             console.error("The -db or --dbPath argument must be supplied.");
             process.exit();

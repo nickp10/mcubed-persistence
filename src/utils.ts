@@ -1,5 +1,8 @@
 import { ActionType } from "./interfaces";
 import * as CryptoJS from "crypto-js";
+import * as mkdirp from "mkdirp";
+import * as os from "os";
+import * as process from "process";
 
 class Utils {
 	validActionTypes(): string[] {
@@ -57,7 +60,21 @@ class Utils {
 
     decrypt(data: string, key: string): string {
         return CryptoJS.AES.decrypt(data, key).toString(CryptoJS.enc.Utf8);
-    }
+	}
+
+	getDefaultDBPath(): string {
+		const penv: any = process.env;
+		let home = penv.LOCALAPPDATA;
+		if (!home) {
+			home = penv.APPDATA;
+			if (!home) {
+				home = os.homedir();
+			}
+		}
+		const dbDir = `${home}/mcubed-persistence`;
+		mkdirp.sync(dbDir);
+		return `${dbDir}/mCubedDB.json`;
+	}
 }
 
 const utils: Utils = new Utils();
