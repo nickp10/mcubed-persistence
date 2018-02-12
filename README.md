@@ -34,6 +34,11 @@ This will retrieve the previously generated application key for the specified ap
 
 * *--appName* - **Required.** This is the name of the application to retrieve the application key for.
 
+`DeleteAppKey`
+This will delete the generated application key for the specified application. This will also delete any privileges that have been configured for this application.
+
+* *--appName* - **Required.** This is the name of the application to delete the application key for.
+
 `AllowTable`
 This will grant access to a specific table for a specific application.
 
@@ -62,6 +67,11 @@ This is used to check if an application has access to a specific table. This may
 * *--appName* - **Required.** This is the name of the application to check access for.
 * *--appKey* - **Required.** This is the key that was generated for the application to check access for.
 * *--tableName* - **Required.** This is the name of the table to check access to.
+
+`DeleteTable`
+This will delete a table and all of its records from the database. This will also delete any privileges that have been configured for this table.
+
+* *--tableName* - **Required.** This is the name of the table to delete.
 
 Setting Up
 ----
@@ -102,6 +112,9 @@ then this will use the query string appended to the URL to perform a search and 
 
 Changelog
 ----
+Changes from 2.0.0 to 2.1.0
+* Added the ability to delete application keys and tables from the command line interface.
+
 Changes from 1.0.0 to 2.0.0
 * IDs (UUID version 4) will automatically be added to all records created via the POST request. Any manually specified IDs will be overwritten.
 * The POST request will return the created object including the generated ID as opposed to returning nothing.

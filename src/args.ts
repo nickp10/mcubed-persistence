@@ -63,7 +63,8 @@ class Args {
             this.action === ActionType.AllowTable ||
             this.action === ActionType.DenyAllTables ||
             this.action === ActionType.DenyTable ||
-            this.action === ActionType.HasAccess) {
+            this.action === ActionType.HasAccess ||
+            this.action === ActionType.DeleteAppKey) {
             if (!this.appName) {
                 console.error("The --appName argument must be supplied.");
                 process.exit();
@@ -74,7 +75,8 @@ class Args {
         this.tableName = utils.coerceTableName(argTableName);
         if (this.action === ActionType.AllowTable ||
             this.action === ActionType.DenyTable ||
-            this.action === ActionType.HasAccess) {
+            this.action === ActionType.HasAccess ||
+            this.action === ActionType.DeleteTable) {
             if (!this.tableName) {
                 console.error("The --tableName argument must be supplied.");
                 process.exit();

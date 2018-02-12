@@ -2,11 +2,13 @@ export enum ActionType {
     Start = 1,
     CreateAppKey,
     GetAppKey,
+    DeleteAppKey,
     AllowTable,
     AllowAllTables,
     DenyTable,
     DenyAllTables,
-    HasAccess
+    HasAccess,
+    DeleteTable
 }
 
 export interface DBSchema {

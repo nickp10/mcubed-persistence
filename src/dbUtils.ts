@@ -32,9 +32,13 @@ class DBUtils {
         db.defaults(defaults).write();
     }
 
-    hasAccess(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>, appName: string, appKey: string, tableName: string): boolean {
+    isRestrictedTable(tableName: string): boolean {
         // Restricted tables, note tableName is toLowerCased() on startup
-        if ("mapps" === tableName || "maccess" === tableName) {
+        return "mapps" === tableName || "maccess" === tableName;
+    }
+
+    hasAccess(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>, appName: string, appKey: string, tableName: string): boolean {
+        if (this.isRestrictedTable(tableName)) {
             return false;
         }
         dbUtils.initTable(db, "mApps");
