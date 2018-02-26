@@ -1,14 +1,8 @@
 {
   "compilerOptions": {
-    "removeComments": true,
     "module": "commonjs",
-    "outDir": "build/",
+    "newLine": "LF",
+    "removeComments": true,
     "target": "es6"
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "src/**/*.d.ts"
-  ]
+  }
 }
