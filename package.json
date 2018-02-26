@@ -1,6 +1,6 @@
 {
   "name": "mcubed-persistence",
-  "version": "2.2.0",
+  "version": "2.1.0",
   "description": "Provides a mechanism for storing data that is exposed via a RESTful server supporting CRUD operations",
   "bin": "build/cli.js",
   "main": "build/cli.js",
