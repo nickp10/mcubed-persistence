@@ -11,20 +11,20 @@ class ServerUtils {
 	startServer(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>): void {
         const app = express();
         app.use(bodyParser.json());
-        app.get("/*", (req, res) => {
+        app.get("/:tableName/:recordID?", (req, res) => {
             if (this.validateRequest(db, req, res)) {
-                const tableName = this.getTableName(req);
-                const recordID = this.getRecordID(req);
+                const tableName = req.params.tableName;
+                const recordID = req.params.recordID;
                 dbUtils.initTable(db, tableName);
                 const value = recordID ?
                     db.get(tableName).find({ id: recordID }).value() :
-                    db.get(tableName).filter(req.query).value();
+                    db.get(tableName).filter(record => this.filterDBRecord(req.query, record)).value();
                 res.status(200).send(value);
             }
         });
-        app.post("/*", (req, res) => {
+        app.post("/:tableName", (req, res) => {
             if (this.validateRequest(db, req, res)) {
-                const tableName = this.getTableName(req);
+                const tableName = req.params.tableName;
                 dbUtils.initTable(db, tableName);
                 const records = req.body;
                 if (Array.isArray(records)) {
@@ -43,28 +43,28 @@ class ServerUtils {
                 }
             }
         });
-        app.put("/*", (req, res) => {
+        app.put("/:tableName/:recordID?", (req, res) => {
             if (this.validateRequest(db, req, res)) {
-                const tableName = this.getTableName(req);
-                const recordID = this.getRecordID(req);
+                const tableName = req.params.tableName;
+                const recordID = req.params.recordID;
                 dbUtils.initTable(db, tableName);
                 if (recordID) {
                     db.get(tableName).find({ id: recordID }).assign(req.body).write();
                 } else {
-                    db.get(tableName).filter(req.query).assign(req.body).write();
+                    db.get(tableName).filter(record => this.filterDBRecord(req.query, record)).assign(req.body).write();
                 }
                 res.status(202).send();
             }
         });
-        app.delete("/*", (req, res) => {
+        app.delete("/:tableName/:recordID?", (req, res) => {
             if (this.validateRequest(db, req, res)) {
-                const tableName = this.getTableName(req);
-                const recordID = this.getRecordID(req);
+                const tableName = req.params.tableName;
+                const recordID = req.params.recordID;
                 dbUtils.initTable(db, tableName);
                 if (recordID) {
                     db.get(tableName).remove({ id: recordID }).write();
                 } else {
-                    db.get(tableName).remove(req.query).write();
+                    db.get(tableName).remove(record => this.filterDBRecord(req.query, record)).write();
                 }
                 res.status(200).send();
             }
@@ -89,23 +89,6 @@ class ServerUtils {
         }
     }
 
-    getTableName(req: express.Request): string {
-        const path = req.path.substr(1);
-        const firstSlash = path.indexOf("/");
-        return utils.coerceTableName(firstSlash > -1 ? path.substr(0, firstSlash) : path);
-    }
-
-    getRecordID(req: express.Request): string {
-        const path = req.path.substr(1);
-        const firstSlash = path.indexOf("/");
-        if (firstSlash > -1) {
-            const offset = firstSlash + 1;
-            const secondSlash = path.indexOf("/", offset);
-            return secondSlash > -1 ? path.substr(offset, secondSlash - offset) : path.substr(offset);
-        }
-        return undefined;
-    }
-
     /**
      * Validates the request to determine the request has access to the table.
      * @param db
@@ -115,7 +98,7 @@ class ServerUtils {
      * the request has access denied to the table or if no table is specified.
      */
     validateRequest(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>, req: express.Request, res: express.Response): boolean {
-        const tableName = this.getTableName(req);
+        const tableName = req.params.tableName;
         if (!tableName) {
             res.status(404).send({ error: "The table name must be specified with the request." });
             return false;
@@ -129,6 +112,23 @@ class ServerUtils {
         if (!dbUtils.hasAccess(db, appName, appKey, tableName)) {
             res.status(403).send({ error: "The specified application does not have access to the specified table." });
             return false;
+        }
+        return true;
+    }
+
+    filterDBRecord(searchObj: any, record: any): boolean {
+        for (const searchProperty of Object.getOwnPropertyNames(searchObj)) {
+            const insensitiveIndex = searchProperty.indexOf("-insensitive");
+            const propertyName = insensitiveIndex > -1 ? searchProperty.substr(0, insensitiveIndex) : searchProperty;
+            const queryValue = searchObj[searchProperty];
+            const recordValue = record[propertyName];
+            if (insensitiveIndex > -1 && typeof queryValue === "string" && typeof recordValue === "string") {
+                if (queryValue.toLowerCase() !== recordValue.toLowerCase()) {
+                    return false;
+                }
+            } else if (queryValue !== recordValue) {
+                return false;
+            }
         }
         return true;
     }
