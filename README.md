@@ -112,7 +112,7 @@ then this will use the query string appended to the URL to perform a search and 
 
 Changelog
 ----
-Changes from 2.1.0 to 2.2.2
+Changes from 2.1.0 to 2.2.0
 * Added the ability to GET, PUT, and DELETE records filtering by case-insensitive values.
 
 Changes from 2.0.0 to 2.1.0
