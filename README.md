@@ -112,6 +112,9 @@ then this will use the query string appended to the URL to perform a search and 
 
 Changelog
 ----
+Changes from 3.0.0 to 3.1.0
+* Implemented throttling when saving changes to the file system. This also occurs asynchronously for immediate responses when publishing updates.
+
 Changes from 2.2.0 to 3.0.0
 * LowDB was replaced with straight-forward file and JavaScript object operations in an effort to increase performance. Database files from 2.* are still compatible with 3.*.
 * The *-db* short-hand CLI argument has been renamed to *-d*. *-db* did not work before, so this is not a breaking change.
