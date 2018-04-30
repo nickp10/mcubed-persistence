@@ -1,9 +1,16 @@
 import { DBSchema } from "./interfaces";
 import args from "./args";
+import * as AwaitLock from "await-lock";
 import * as fs from "fs";
+import * as throttle from "throttle-debounce";
+import * as util from "util";
 import utils from "./utils";
+const writeFileAsync = util.promisify(fs.writeFile);
 
 class DBUtils {
+    writeDBLock = new AwaitLock();
+    writeDBThrottled: (data: string) => Promise<void> = throttle.throttle(5000, this.doWriteDB.bind(this));
+
     readDB(): DBSchema {
         try {
             if (!fs.existsSync(args.dbPath)) {
@@ -29,7 +36,16 @@ class DBUtils {
     writeDB(db: DBSchema): void {
         if (db) {
             const data = utils.encrypt(JSON.stringify(db), args.password);
-            fs.writeFileSync(args.dbPath, data, "utf8");
+            this.writeDBThrottled(data);
+        }
+    }
+
+    async doWriteDB(data: string): Promise<void> {
+        await this.writeDBLock.acquireAsync();
+        try {
+            await writeFileAsync(args.dbPath, data, "utf8");
+        } finally {
+            this.writeDBLock.release();
         }
     }
 
