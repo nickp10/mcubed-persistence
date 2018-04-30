@@ -29,26 +29,26 @@
     "argv": "0.0.2",
     "body-parser": "^1.18.2",
     "crypto-js": "^3.1.9-1",
-    "express": "^4.16.2",
+    "express": "^4.16.3",
     "lowdb": "^1.0.0",
     "mkdirp": "^0.5.1",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
     "@types/argv": "0.0.4",
-    "@types/crypto-js": "^3.1.38",
+    "@types/crypto-js": "^3.1.39",
     "@types/express": "^4.11.1",
-    "@types/lowdb": "^1.0.0",
+    "@types/lowdb": "^1.0.1",
     "@types/mkdirp": "^0.5.2",
-    "@types/node": "^9.4.6",
+    "@types/node": "^6.0.107",
     "@types/uuid": "^3.4.3",
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-preset-env": "^1.6.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",
     "gulp-sourcemaps": "^2.6.4",
-    "gulp-typescript": "^4.0.1",
+    "gulp-typescript": "^4.0.2",
     "gulp-uglify": "^3.0.0",
-    "typescript": "^2.7.2"
+    "typescript": "^2.8.3"
   }
 }

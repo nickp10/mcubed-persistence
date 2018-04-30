@@ -8,7 +8,7 @@ import * as utils from "./utils";
 import * as uuid4 from "uuid/v4";
 
 class ServerUtils {
-	startServer(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>): void {
+    startServer(db: lowdb.LowdbAsync<DBSchema>): void {
         const app = express();
         app.use(bodyParser.json());
         app.get("/:tableName/:recordID?", (req, res) => {
@@ -97,7 +97,7 @@ class ServerUtils {
      * @returns True if the request has access granted to the table. False if
      * the request has access denied to the table or if no table is specified.
      */
-    validateRequest(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>, req: express.Request, res: express.Response): boolean {
+    validateRequest(db: lowdb.LowdbAsync<DBSchema>, req: express.Request, res: express.Response): boolean {
         const tableName = req.params.tableName;
         if (!tableName) {
             res.status(404).send({ error: "The table name must be specified with the request." });

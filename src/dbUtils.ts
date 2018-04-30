@@ -5,7 +5,7 @@ import * as lowdb from "lowdb";
 import * as utils from "./utils";
 
 class DBUtils {
-	newDB(): Promise<lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>> {
+    newDB(): Promise<lowdb.LowdbAsync<DBSchema>> {
         const adapter = new FileAsync<DBSchema>(args.dbPath, {
             serialize: (data) => utils.encrypt(JSON.stringify(data), args.password),
             deserialize: (data) => {
@@ -26,7 +26,7 @@ class DBUtils {
         return lowdb(adapter);
     }
 
-    initTable(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>, tableName: string): void {
+    initTable(db: lowdb.LowdbAsync<DBSchema>, tableName: string): void {
         const defaults = { };
         defaults[tableName] = [];
         db.defaults(defaults).write();
@@ -37,7 +37,7 @@ class DBUtils {
         return "mapps" === tableName || "maccess" === tableName;
     }
 
-    hasAccess(db: lowdb.Lowdb<DBSchema, lowdb.AdapterAsync>, appName: string, appKey: string, tableName: string): boolean {
+    hasAccess(db: lowdb.LowdbAsync<DBSchema>, appName: string, appKey: string, tableName: string): boolean {
         if (this.isRestrictedTable(tableName)) {
             return false;
         }
