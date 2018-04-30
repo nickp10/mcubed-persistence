@@ -7,8 +7,8 @@ NPM package providing a mechanism for storing data that is exposed via a RESTful
 Features
 ----
 * RESTful [express](http://expressjs.com) server supporting CRUD operations (Create, Read, Update, and Delete)
-* Data stored using [lowdb](https://github.com/typicode/lowdb)
-* AES encrypted data via [CyrptoJS](https://github.com/gwjjeff/cryptojs)
+* Data stored using an AES-encrypted JSON file
+* AES-encrypted data via [CyrptoJS](https://github.com/gwjjeff/cryptojs)
 * Application partitioned database via simple privilege system
 
 Command Line Interface 
@@ -16,7 +16,7 @@ Command Line Interface
 This package is only usable via a command line interface (CLI). Every command has the following shared parameters:
 
 * *--password* - **Required.** This value is used as the key to encrypt and decrypt the data using AES encryption. This value is never stored anywhere and cannot be recovered. This must be the exact same for every subsequent command issued for a single database. You could have multiple databases by specifying the *-db / --dbPath* parameter. This password can be different for each unique database, but those databases can only be used when issuing the proper corresponding password.
-* *-db / --dbPath* - **Optional.** This is an optional path to read and write the database to and from. This will default to the current working directory with a file called *mCubedDB.json*.
+* *-d / --dbPath* - **Optional.** This is an optional path to read and write the database to and from. This will default to the current working directory with a file called *mCubedDB.json*.
 * *-a / --action* - **Optional.** This is the action to perform from the CLI. This must be one of the following values: `Start`, `CreateAppKey`, `GetAppKey`, `AllowTable`, `AllowAllTables`, `DenyTable`, `DenyAllTables`, or `HasAccess`. This will default to `Start`. This value is case insensitive. Each action may or may not have further required or optional CLI parameters. Refer to the next section of a breakdown of each action and their corresponding CLI parameters.
 
 `Start`
@@ -112,6 +112,10 @@ then this will use the query string appended to the URL to perform a search and 
 
 Changelog
 ----
+Changes from 2.2.0 to 3.0.0
+* LowDB was replaced with straight-forward file and JavaScript object operations in an effort to increase performance. Database files from 2.* are still compatible with 3.*.
+* The *-db* short-hand CLI argument has been renamed to *-d*. *-db* did not work before, so this is not a breaking change.
+
 Changes from 2.1.0 to 2.2.0
 * Added the ability to GET, PUT, and DELETE records filtering by case-insensitive values.
 

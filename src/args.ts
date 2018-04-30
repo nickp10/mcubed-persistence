@@ -14,7 +14,7 @@ class Args {
     constructor() {
         const args = argv
             .option({ name: "action", short: "a", type: "string" })
-            .option({ name: "dbPath", short: "db", type: "string" })
+            .option({ name: "dbPath", short: "d", type: "string" })
             .option({ name: "appKey", type: "string" })
             .option({ name: "appName", type: "string" })
             .option({ name: "tableName", type: "string" })
@@ -42,7 +42,7 @@ class Args {
         // Validate dbPath
         this.dbPath = argDBPath || utils.getDefaultDBPath();
         if (!this.dbPath) {
-            console.error("The -db or --dbPath argument must be supplied.");
+            console.error("The -d or --dbPath argument must be supplied.");
             process.exit();
         }
 
