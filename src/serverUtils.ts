@@ -1,14 +1,13 @@
 import { DBSchema } from "./interfaces";
-import * as args from "./args";
+import args from "./args";
 import * as bodyParser from "body-parser";
-import * as dbUtils from "./dbUtils";
+import dbUtils from "./dbUtils";
 import * as express from "express";
-import * as lowdb from "lowdb";
-import * as utils from "./utils";
+import utils from "./utils";
 import * as uuid4 from "uuid/v4";
 
 class ServerUtils {
-    startServer(db: lowdb.LowdbAsync<DBSchema>): void {
+    startServer(db: DBSchema): void {
         const app = express();
         app.use(bodyParser.json());
         app.get("/:tableName/:recordID?", (req, res) => {
@@ -17,8 +16,8 @@ class ServerUtils {
                 const recordID = req.params.recordID;
                 dbUtils.initTable(db, tableName);
                 const value = recordID ?
-                    db.get(tableName).find({ id: recordID }).value() :
-                    db.get(tableName).filter(record => this.filterDBRecord(req.query, record)).value();
+                    dbUtils.find(db, tableName, { id: recordID }) :
+                    dbUtils.filter(db, tableName, req.query);
                 res.status(200).send(value);
             }
         });
@@ -31,14 +30,15 @@ class ServerUtils {
                     for (let i = 0; i < records.length; i++) {
                         const record = records[i];
                         record.id = uuid4();
-                        db.get(tableName).push(record).value();
+                        dbUtils.push(db, tableName, record);
                     }
-                    db.write();
+                    dbUtils.writeDB(db);
                     res.status(201).send(records);
                 } else {
                     const record = req.body;
                     record.id = uuid4();
-                    db.get(tableName).push(record).write();
+                    dbUtils.push(db, tableName, record);
+                    dbUtils.writeDB(db);
                     res.status(201).send(record);
                 }
             }
@@ -49,9 +49,19 @@ class ServerUtils {
                 const recordID = req.params.recordID;
                 dbUtils.initTable(db, tableName);
                 if (recordID) {
-                    db.get(tableName).find({ id: recordID }).assign(req.body).write();
+                    const record = dbUtils.find(db, tableName, { id: recordID });
+                    if (record) {
+                        Object.assign(record, req.body);
+                        dbUtils.writeDB(db);
+                    }
                 } else {
-                    db.get(tableName).filter(record => this.filterDBRecord(req.query, record)).assign(req.body).write();
+                    const records = dbUtils.filter(db, tableName, req.query);
+                    if (Array.isArray(records)) {
+                        for (const record of records) {
+                            Object.assign(record, req.body);
+                        }
+                        dbUtils.writeDB(db);
+                    }
                 }
                 res.status(202).send();
             }
@@ -62,9 +72,19 @@ class ServerUtils {
                 const recordID = req.params.recordID;
                 dbUtils.initTable(db, tableName);
                 if (recordID) {
-                    db.get(tableName).remove({ id: recordID }).write();
+                    const record = dbUtils.find(db, tableName, { id: recordID });
+                    if (record) {
+                        dbUtils.remove(db, tableName, record);
+                        dbUtils.writeDB(db);
+                    }
                 } else {
-                    db.get(tableName).remove(record => this.filterDBRecord(req.query, record)).write();
+                    const records = dbUtils.filter(db, tableName, req.query);
+                    if (Array.isArray(records)) {
+                        for (const record of records) {
+                            dbUtils.remove(db, tableName, record);
+                        }
+                        dbUtils.writeDB(db);
+                    }
                 }
                 res.status(200).send();
             }
@@ -97,7 +117,7 @@ class ServerUtils {
      * @returns True if the request has access granted to the table. False if
      * the request has access denied to the table or if no table is specified.
      */
-    validateRequest(db: lowdb.LowdbAsync<DBSchema>, req: express.Request, res: express.Response): boolean {
+    validateRequest(db: DBSchema, req: express.Request, res: express.Response): boolean {
         const tableName = req.params.tableName;
         if (!tableName) {
             res.status(404).send({ error: "The table name must be specified with the request." });
@@ -115,24 +135,6 @@ class ServerUtils {
         }
         return true;
     }
-
-    filterDBRecord(searchObj: any, record: any): boolean {
-        for (const searchProperty of Object.getOwnPropertyNames(searchObj)) {
-            const insensitiveIndex = searchProperty.indexOf("-insensitive");
-            const propertyName = insensitiveIndex > -1 ? searchProperty.substr(0, insensitiveIndex) : searchProperty;
-            const queryValue = searchObj[searchProperty];
-            const recordValue = record[propertyName];
-            if (insensitiveIndex > -1 && typeof queryValue === "string" && typeof recordValue === "string") {
-                if (queryValue.toLowerCase() !== recordValue.toLowerCase()) {
-                    return false;
-                }
-            } else if (queryValue !== recordValue) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
 
-const serverUtils: ServerUtils = new ServerUtils();
-export = serverUtils;
+export default new ServerUtils();
