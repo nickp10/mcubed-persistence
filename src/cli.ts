@@ -1,5 +1,4 @@
-#! /usr/bin/env node
-import "babel-polyfill";
+import "@babel/polyfill";
 
 import { ActionType, DBApp } from "./interfaces";
 import args from "./args";

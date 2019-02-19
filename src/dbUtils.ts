@@ -1,6 +1,6 @@
 import { DBSchema } from "./interfaces";
 import args from "./args";
-import * as AwaitLock from "await-lock";
+import { Mutex } from "async-mutex";
 import * as fs from "fs";
 import * as throttle from "throttle-debounce";
 import * as util from "util";
@@ -8,7 +8,7 @@ import utils from "./utils";
 const writeFileAsync = util.promisify(fs.writeFile);
 
 class DBUtils {
-    writeDBLock = new AwaitLock();
+    writeDBLock = new Mutex();
     writeDBThrottled: (data: string) => Promise<void> = throttle.throttle(5000, this.doWriteDB.bind(this));
 
     readDB(): DBSchema {
@@ -41,11 +41,11 @@ class DBUtils {
     }
 
     async doWriteDB(data: string): Promise<void> {
-        await this.writeDBLock.acquireAsync();
+        const release = await this.writeDBLock.acquire();
         try {
             await writeFileAsync(args.dbPath, data, "utf8");
         } finally {
-            this.writeDBLock.release();
+            release();
         }
     }
 
