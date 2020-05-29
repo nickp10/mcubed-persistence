@@ -5,7 +5,7 @@ import { ActionType, DBApp } from "./interfaces";
 import args from "./args";
 import dbUtils from "./dbUtils";
 import serverUtils from "./serverUtils";
-import * as uuidv4 from "uuid/v4";
+import { v4 as uuidv4 } from "uuid";
 
 const db = dbUtils.newDB();
 if (args.action === ActionType.CreateAppKey) {

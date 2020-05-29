@@ -4,7 +4,7 @@ import * as bodyParser from "body-parser";
 import dbUtils from "./dbUtils";
 import * as express from "express";
 import utils from "./utils";
-import * as uuid4 from "uuid/v4";
+import { v4 as uuidv4 } from "uuid";
 
 class ServerUtils {
     startServer(db: DBSchema): void {
@@ -29,14 +29,14 @@ class ServerUtils {
                 if (Array.isArray(records)) {
                     for (let i = 0; i < records.length; i++) {
                         const record = records[i];
-                        record.id = uuid4();
+                        record.id = uuidv4();
                         dbUtils.push(db, tableName, record);
                     }
                     dbUtils.writeDB(db);
                     res.status(201).send(records);
                 } else {
                     const record = req.body;
-                    record.id = uuid4();
+                    record.id = uuidv4();
                     dbUtils.push(db, tableName, record);
                     dbUtils.writeDB(db);
                     res.status(201).send(record);
